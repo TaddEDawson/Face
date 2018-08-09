@@ -1,0 +1,26 @@
+# Get Data
+$Users = Import-Csv .\Users.csv
+$Url = "SEE THE EMAIL THREAD, Not Sharing here"
+# email=$($User.alias)%40COMPANY.DOM email address instead of combine? 
+
+foreach ($User in $Users)
+{
+    [System.Uri] $imageURL = $Url+"?email=$($User.alias)%40COMPANY.DOM&UA=0&size=HR96x96"
+#    $IWR = Invoke-WebRequest -Uri $imageURL -UseBasicParsing -Credential $Credential -Verbose
+    try 
+    {
+        $IWR = Invoke-WebRequest -Uri $imageURL -UseBasicParsing -UseDefaultCredentials -Verbose -ErrorAction SilentlyContinue
+        $IWR.Status
+        $IWR.Images[0]
+        
+    }
+    catch 
+    {
+        $Error[0]
+    }
+
+    [System.Uri] $faceAttributes = "$faceapiEndpoint/detect[?returnFaceId][&returnFaceLandmarks][&returnFaceAttributes]"
+    [System.Uri] $createProfile = "$faceapiEndpoint/persongroups/{$personGroupID}/persons" 
+
+    "$($User.alias)`n`t$($imageURL.AbsoluteUri)`n`t$($faceAttributes.AbsoluteUri)`n`t$($createProfile.AbsoluteUri)"
+}
